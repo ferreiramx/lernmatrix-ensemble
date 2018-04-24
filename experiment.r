@@ -1,5 +1,6 @@
+library("future.apply")
 plan("multiprocess")
-res = future.apply::future_lapply(lst,function(x){
+res.unweighted = future.apply::future_lapply(lst,function(x){
   write(paste("Processing: ", x[1]),"log.txt", append = T);
   data = eval(parse(text=x[1]));
   ret = multi.size.run(data,eval(parse(text=x[2])),bin.count, 100, x[1]);

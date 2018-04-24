@@ -28,8 +28,8 @@ rand.code.ensemble <- function(n, dataset, test.set = c(), train.pct = 0.6, fact
     }
     #print(res$accuracy)
     #print(test$accuracy)
-    if(res$accuracy > 0.5) predictions = predictions + log10(res$accuracy / (1-res$accuracy))*test$predictions
-    #if(res$accuracy > 0.5) predictions = predictions + test$predictions
+    #if(res$accuracy > 0.5) predictions = predictions + log10(res$accuracy / (1-res$accuracy))*test$predictions
+    if(res$accuracy > 0.5) predictions = predictions + test$predictions
   }
   #print(predictions)
   predictions = apply(predictions,2,function(x){floor(x/max(x))})
