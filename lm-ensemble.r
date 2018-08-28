@@ -1,7 +1,7 @@
 rand.code.ensemble <- function(n, dataset, test.set = c(), train.pct = 0.6, factor = 0, counter = c()){
   source("binarization.r")
   source("lernmatrix.r")
-  source("E:/Dropbox/rcode/gamma.r")
+  source("gamma.r")
   if(length(test.set) == 0){
     n.train = floor(nrow(dataset)*train.pct)
     n.test = nrow(dataset) - n.train
