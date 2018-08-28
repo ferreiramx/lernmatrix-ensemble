@@ -1,4 +1,4 @@
-lernmatrix <- function(test,train,output=""){
+lernmatrix <- function(test,train){
   #Training
   Y <- class.matrix(train[,ncol(train)])
   X <- as.matrix(-(-1)^train[,-ncol(train)])

@@ -1,6 +1,7 @@
 rand.code.ensemble <- function(n, dataset, test.set = c(), train.pct = 0.6, factor = 0, counter = c()){
   source("binarization.r")
   source("lernmatrix.r")
+  source("E:/Dropbox/rcode/gamma.r")
   if(length(test.set) == 0){
     n.train = floor(nrow(dataset)*train.pct)
     n.test = nrow(dataset) - n.train
@@ -18,18 +19,19 @@ rand.code.ensemble <- function(n, dataset, test.set = c(), train.pct = 0.6, fact
     #cat("\014")
     #print(paste("-------",i,"-------"))
     if(length(test.set) > 0){
-      res = lernmatrix(random.coding(dataset,factor,counter=counter), random.coding(dataset,factor,counter=counter))
-      if(res$accuracy > 0.5) test = lernmatrix(random.coding(test.set,factor,counter=counter), random.coding(dataset,factor,counter=counter))
+      res = gamma(random.coding(dataset,factor,counter=counter), random.coding(dataset,factor,counter=counter))
+      if(res$accuracy > 0.5) test = gamma(random.coding(test.set,factor,counter=counter), random.coding(dataset,factor,counter=counter))
     }
     else{
       rand.code.data = random.coding(dataset,factor,counter=counter)
-      res = lernmatrix(rand.code.data[train.idx,],rand.code.data[train.idx,])
-      if(res$accuracy > 0.5) test = lernmatrix(rand.code.data[test.idx,],rand.code.data[train.idx,])
+      res = gamma(rand.code.data[train.idx,],rand.code.data[train.idx,])
+      if(res$accuracy >= 0.5) test = gamma(rand.code.data[test.idx,],rand.code.data[train.idx,])
     }
     #print(res$accuracy)
     #print(test$accuracy)
-    #if(res$accuracy > 0.5) predictions = predictions + log10(res$accuracy / (1-res$accuracy))*test$predictions
-    if(res$accuracy > 0.5) predictions = predictions + test$predictions
+    if(res$accuracy > 0.5) predictions = predictions + log10(res$accuracy / (1-res$accuracy))*test$predictions
+    #if(res$accuracy > 0.5) predictions = predictions + test$predictions
+    #print(predictions)
   }
   #print(predictions)
   predictions = apply(predictions,2,function(x){floor(x/max(x))})
@@ -43,15 +45,15 @@ multi.size.run <- function(dataset, factor, counter, runs, ds.name){
   return(list(
     x25 = multi.run(25, runs, dataset, factor, counter, ds.name),
     x50 = multi.run(50, runs, dataset, factor, counter, ds.name),
-    x100 = multi.run(100, runs, dataset, factor, counter, ds.name),
-    x200 = multi.run(200, runs, dataset, factor, counter, ds.name)
+    x100 = multi.run(100, runs, dataset, factor, counter, ds.name)#,
+    #x200 = multi.run(200, runs, dataset, factor, counter, ds.name)
   ))
 }
 
 multi.run <- function(size,runs,dataset,factor,counter=c(), ds.name){
   var = c()
   for(i in 1:runs){
-    write(paste("[",ds.name," x",size,"] ",i,"/",runs,sep=""), "log.txt", append = T)
+    write(paste("[",ds.name," x",size,"] ",i,"/",runs,sep=""), "log_gamma.txt", append = T)
     var = c(var,rand.code.ensemble(size,dataset,factor=factor,counter=counter))
   }
   return(summary(var))
