@@ -1,13 +1,22 @@
 library("future.apply")
 plan("multiprocess")
-res.gamma = future.apply::future_lapply(lst,function(x){
+
+res.gamma=lapply(lst,function(x){
   write(paste("Processing: ", x[1]),"log_gamma.txt", append = T);
   data = eval(parse(text=x[1]));
   ret = multi.size.run(data,eval(parse(text=x[2])),bin.count, 100, x[1]);
-  #ret = multi.run(1000,100,data,eval(parse(text=x[2])),bin.count,x[1]);
   write(paste("Finished: ", x[1]),"log_gamma.txt", append = T);
   return(ret);
-  }, future.globals = ls());
+})
+
+# res.gamma = future.apply::future_lapply(lst,function(x){
+#   write(paste("Processing: ", x[1]),"log_gamma.txt", append = T);
+#   data = eval(parse(text=x[1]));
+#   ret = multi.size.run(data,eval(parse(text=x[2])),bin.count, 100, x[1]);
+#   #ret = multi.run(1000,100,data,eval(parse(text=x[2])),bin.count,x[1]);
+#   write(paste("Finished: ", x[1]),"log_gamma.txt", append = T);
+#   return(ret);
+# }, future.globals = ls());
 # print("Processing: banknote.auth")
 # stats.banknote = multi.size.run(banknote.auth,4,bin.count,100)
 # print("Finished processing: banknote.auth")

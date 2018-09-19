@@ -52,10 +52,21 @@ multi.size.run <- function(dataset, factor, counter, runs, ds.name){
 
 multi.run <- function(size,runs,dataset,factor,counter=c(), ds.name){
   var = c()
-  for(i in 1:runs){
+  library("parallel")
+  library("doParallel")
+  library("foreach")
+  cl <- makeForkCluster(11)
+  registerDoParallel(cl)
+  var = foreach(i = 1:runs, .combine="c") %dopar% {
     write(paste("[",ds.name," x",size,"] ",i,"/",runs,sep=""), "log_gamma.txt", append = T)
-    var = c(var,rand.code.ensemble(size,dataset,factor=factor,counter=counter))
+    rand.code.ensemble(size,dataset,factor=factor,counter=counter)
+    #var = c(var,rand.code.ensemble(size,dataset,factor=factor,counter=counter))
   }
+  stopCluster(cl)
+  # for(i in 1:runs){
+  #   write(paste("[",ds.name," x",size,"] ",i,"/",runs,sep=""), "log_gamma.txt", append = T)
+  #   var = c(var,rand.code.ensemble(size,dataset,factor=factor,counter=counter))
+  # }
   return(summary(var))
 }
 
