@@ -29,8 +29,8 @@ rand.code.ensemble <- function(n, dataset, test.set = c(), train.pct = 0.6, fact
     }
     #print(res$accuracy)
     #print(test$accuracy)
-    if(res$accuracy > 0.5) predictions = predictions + log10(res$accuracy / (1-res$accuracy))*test$predictions
-    #if(res$accuracy > 0.5) predictions = predictions + test$predictions
+    #if(res$accuracy > 0.5) predictions = predictions + log10(res$accuracy / (1-res$accuracy))*test$predictions
+    if(res$accuracy > 0.5) predictions = predictions + test$predictions
     #print(predictions)
   }
   #print(predictions)
@@ -56,6 +56,7 @@ multi.run <- function(size,runs,dataset,factor,counter=c(), ds.name){
   library("doParallel")
   library("foreach")
   cl <- makeForkCluster(11)
+  clusterSetRNGStream(cl)
   registerDoParallel(cl)
   var = foreach(i = 1:runs, .combine="c") %dopar% {
     write(paste("[",ds.name," x",size,"] ",i,"/",runs,sep=""), "log_gamma.txt", append = T)
@@ -67,6 +68,8 @@ multi.run <- function(size,runs,dataset,factor,counter=c(), ds.name){
   #   write(paste("[",ds.name," x",size,"] ",i,"/",runs,sep=""), "log_gamma.txt", append = T)
   #   var = c(var,rand.code.ensemble(size,dataset,factor=factor,counter=counter))
   # }
+  write(paste("[",ds.name," x", size, "]: ", "Min: ",summary(var)[1], " Mean: ",summary(var)[4], " Max: ",summary(var)[6], sep=""), "res_gamma.txt", append=T)
+  print(var)
   return(summary(var))
 }
 
